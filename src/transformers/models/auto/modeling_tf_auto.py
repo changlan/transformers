@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""" Auto Model class. """
+""" Auto Model class."""
 
 
 import warnings
@@ -29,11 +29,14 @@ logger = logging.get_logger(__name__)
 TF_MODEL_MAPPING_NAMES = OrderedDict(
     [
         # Base model mapping
+        ("speech_to_text", "TFSpeech2TextModel"),
+        ("clip", "TFCLIPModel"),
         ("deberta-v2", "TFDebertaV2Model"),
         ("deberta", "TFDebertaModel"),
         ("rembert", "TFRemBertModel"),
         ("roformer", "TFRoFormerModel"),
         ("convbert", "TFConvBertModel"),
+        ("convnext", "TFConvNextModel"),
         ("led", "TFLEDModel"),
         ("lxmert", "TFLxmertModel"),
         ("mt5", "TFMT5Model"),
@@ -102,6 +105,7 @@ TF_MODEL_FOR_PRETRAINING_MAPPING_NAMES = OrderedDict(
 TF_MODEL_WITH_LM_HEAD_MAPPING_NAMES = OrderedDict(
     [
         # Model with LM heads mapping
+        ("speech_to_text", "TFSpeech2TextForConditionalGeneration"),
         ("rembert", "TFRemBertForMaskedLM"),
         ("roformer", "TFRoFormerForMaskedLM"),
         ("convbert", "TFConvBertForMaskedLM"),
@@ -135,6 +139,7 @@ TF_MODEL_WITH_LM_HEAD_MAPPING_NAMES = OrderedDict(
 TF_MODEL_FOR_CAUSAL_LM_MAPPING_NAMES = OrderedDict(
     [
         # Model for Causal LM mapping
+        ("camembert", "TFCamembertForCausalLM"),
         ("rembert", "TFRemBertForCausalLM"),
         ("roformer", "TFRoFormerForCausalLM"),
         ("roberta", "TFRobertaForCausalLM"),
@@ -152,6 +157,13 @@ TF_MODEL_FOR_IMAGE_CLASSIFICATION_MAPPING_NAMES = OrderedDict(
     [
         # Model for Image-classsification
         ("vit", "TFViTForImageClassification"),
+        ("convnext", "TFConvNextForImageClassification"),
+    ]
+)
+
+TF_MODEL_FOR_VISION_2_SEQ_MAPPING_NAMES = OrderedDict(
+    [
+        ("vision-encoder-decoder", "TFVisionEncoderDecoderModel"),
     ]
 )
 
@@ -181,7 +193,6 @@ TF_MODEL_FOR_MASKED_LM_MAPPING_NAMES = OrderedDict(
     ]
 )
 
-
 TF_MODEL_FOR_SEQ_TO_SEQ_CAUSAL_LM_MAPPING_NAMES = OrderedDict(
     [
         # Model for Seq2Seq Causal LM mapping
@@ -195,6 +206,12 @@ TF_MODEL_FOR_SEQ_TO_SEQ_CAUSAL_LM_MAPPING_NAMES = OrderedDict(
         ("blenderbot-small", "TFBlenderbotSmallForConditionalGeneration"),
         ("bart", "TFBartForConditionalGeneration"),
         ("encoder-decoder", "TFEncoderDecoderModel"),
+    ]
+)
+
+TF_MODEL_FOR_SPEECH_SEQ_2_SEQ_MAPPING_NAMES = OrderedDict(
+    [
+        ("speech_to_text", "TFSpeech2TextForConditionalGeneration"),
     ]
 )
 
@@ -326,12 +343,16 @@ TF_MODEL_FOR_CAUSAL_LM_MAPPING = _LazyAutoMapping(CONFIG_MAPPING_NAMES, TF_MODEL
 TF_MODEL_FOR_IMAGE_CLASSIFICATION_MAPPING = _LazyAutoMapping(
     CONFIG_MAPPING_NAMES, TF_MODEL_FOR_IMAGE_CLASSIFICATION_MAPPING_NAMES
 )
+TF_MODEL_FOR_VISION_2_SEQ_MAPPING = _LazyAutoMapping(CONFIG_MAPPING_NAMES, TF_MODEL_FOR_VISION_2_SEQ_MAPPING_NAMES)
 TF_MODEL_FOR_MASKED_LM_MAPPING = _LazyAutoMapping(CONFIG_MAPPING_NAMES, TF_MODEL_FOR_MASKED_LM_MAPPING_NAMES)
 TF_MODEL_FOR_SEQ_TO_SEQ_CAUSAL_LM_MAPPING = _LazyAutoMapping(
     CONFIG_MAPPING_NAMES, TF_MODEL_FOR_SEQ_TO_SEQ_CAUSAL_LM_MAPPING_NAMES
 )
 TF_MODEL_FOR_SEQUENCE_CLASSIFICATION_MAPPING = _LazyAutoMapping(
     CONFIG_MAPPING_NAMES, TF_MODEL_FOR_SEQUENCE_CLASSIFICATION_MAPPING_NAMES
+)
+TF_MODEL_FOR_SPEECH_SEQ_2_SEQ_MAPPING = _LazyAutoMapping(
+    CONFIG_MAPPING_NAMES, TF_MODEL_FOR_SPEECH_SEQ_2_SEQ_MAPPING_NAMES
 )
 TF_MODEL_FOR_QUESTION_ANSWERING_MAPPING = _LazyAutoMapping(
     CONFIG_MAPPING_NAMES, TF_MODEL_FOR_QUESTION_ANSWERING_MAPPING_NAMES
@@ -384,6 +405,13 @@ class TFAutoModelForImageClassification(_BaseAutoModelClass):
 
 
 AutoModelForImageClassification = auto_class_update(TFAutoModelForImageClassification, head_doc="image classification")
+
+
+class TFAutoModelForVision2Seq(_BaseAutoModelClass):
+    _model_mapping = TF_MODEL_FOR_VISION_2_SEQ_MAPPING
+
+
+TFAutoModelForVision2Seq = auto_class_update(TFAutoModelForVision2Seq, head_doc="vision-to-text modeling")
 
 
 class TFAutoModelForMaskedLM(_BaseAutoModelClass):
@@ -451,6 +479,15 @@ class TFAutoModelForNextSentencePrediction(_BaseAutoModelClass):
 
 TFAutoModelForNextSentencePrediction = auto_class_update(
     TFAutoModelForNextSentencePrediction, head_doc="next sentence prediction"
+)
+
+
+class TFAutoModelForSpeechSeq2Seq(_BaseAutoModelClass):
+    _model_mapping = TF_MODEL_FOR_SPEECH_SEQ_2_SEQ_MAPPING
+
+
+TFAutoModelForSpeechSeq2Seq = auto_class_update(
+    TFAutoModelForSpeechSeq2Seq, head_doc="sequence-to-sequence speech-to-text modeling"
 )
 
 
